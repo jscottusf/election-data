@@ -12,7 +12,7 @@ const connection = mysql.createConnection({
 connection.connect(function(error) {
     if (error) throw error
     console.log('connected');
-    readData();
+    statePollingData();
 });
 
 function readData() {
@@ -35,7 +35,7 @@ function readData() {
     });
 }
 
-function stateData() {
+function statePollingData() {
     console.log("Selecting all data...\n");
     connection.query("SELECT * FROM 2020_general_election WHERE state =?",
     [state],
@@ -51,6 +51,20 @@ function stateData() {
                 '--------------------------------'
             ].join('\n');
             console.log(pollingData);
+        }
+        
+        connection.end();
+    });
+}
+
+function partisanLean() {
+    console.log("Selecting all data...");
+    connection.query('SELECT * FROM states_partisan_lean',
+     function(err, response) {
+        if (err) throw err;
+        console.log('-----------------------------');
+        for (var i = 0; i < response.length; i++) {
+            console.log(response[i].state + ' | ' + response[i].pvi_538)
         }
         
         connection.end();
