@@ -9,12 +9,15 @@ var firebaseConfig = {
   appId: "1:627040919383:web:d569ee8fcdaae97cbb6812"
 };
 let database;
-// Initialize Firebase
+let polls;
+partisanLean;
 states;
+// Initialize Firebase
+
 firebase.initializeApp(firebaseConfig);
 database = firebase.database();
 
-function pullData() {
+function updateElectionData() {
   $.ajax({
       url: 'http://projects.fivethirtyeight.com/polls-page/president_polls.csv',
       async: false,
@@ -23,20 +26,27 @@ function pullData() {
       },
       dataType: 'text',
       complete: function() {
-          var polls = JSON.stringify(data, null, 2);
+          polls = JSON.stringify(data, null, 2);
           console.log(polls);
+          //console.log(data);
       }
   })
 }
 
-pullData();
+console.log(partisanLean);
+updateElectionData();
 
 $("path, circle").hover(function(e) {
+  //$(this).data('info').empty();
   var state = $(this).attr('id');
-  console.log(state);
-  appendStateData(state);
+  var stateName = states[state];
+  //console.log(state + stateName);
+  var infoDiv = $('<div>');
+  var stateNameDiv = $('<div>State: ' + stateName + '</div>');
+  var partisanLeanDiv = $('<div>Partisan Lean: ' + partisanLean[stateName] + '</div>');
+  $(infoDiv).append(stateNameDiv, partisanLeanDiv);
   $('#info-box').css('display','block');
-  $('#info-box').html($(this).data('info'));
+  $('#info-box').html(infoDiv);
 });
 
 $("path, circle").mouseleave(function(e) {
@@ -44,10 +54,8 @@ $("path, circle").mouseleave(function(e) {
 });
 
 $(document).mousemove(function(e) {
-  $('#info-box').css('top',e.pageY-$('#info-box').height()-200);
-  $('#info-box').css('left',e.pageX-($('#info-box').width())/0.5);
-  
-  console.log()
+  //$('#info-box').css('top',e.pageY-$('#info-box').height()-50);
+  //$('#info-box').css('left',e.pageX-($('#info-box').width())*3);
 }).mouseover();
 
 var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -57,13 +65,6 @@ if(ios) {
     window.open(link,'_blank');
     return false;
   });
-}
-
-function appendStateData(state) {
-  var ref = state;
-  state = states[ref];
-  console.log(state);
-    
 }
 
 $('path').on('click', function() {
