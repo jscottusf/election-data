@@ -22,20 +22,22 @@ html, body {
   width: 100%;
   height: 100%;
 }
-path {
+/* path {
   fill: #5175ac;
-}
+} */
 path:hover, circle:hover {
-  stroke: #002868 !important;
-  stroke-width:2px;
+  z-index: -1;
+  stroke: black !important;
+  stroke-width: 4px;
   stroke-linejoin: round;
-  fill: #002868 !important;
+  /* fill: #002868 !important; */
   cursor: pointer;
 }
 #path67 {
   fill: none !important;
   stroke: #A9A9A9 !important;
   cursor: default;
+  margin: 5px;
 }
 #info-box {
   display: none;
@@ -49,9 +51,11 @@ path:hover, circle:hover {
   padding: 5px;
 }
 
-.push {
-  margin: 50px;
-  height: 50px;
+#polldata {
+  border-radius: 15px;
+  border: 2px solid black;
+  padding: 15px !important;
+  background-color: #e9ecef;
 }
 
 .footer {
