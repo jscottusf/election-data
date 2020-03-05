@@ -7,8 +7,8 @@
 	<title>2020 | Election Data</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="./assets/css/style.css" />
-	<!-- <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script> -->
+	<script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
 </head>
 <body>
 	<div class="jumbotron jumbotron-fluid">
@@ -17,7 +17,7 @@
 		  <p class="lead">Your source for polling data for all fifty states. Powered by FiveThirtyEight Data.</p>
 		</div>
 	</div>
-	<div class="container-fluid">
+	<div class="container">
 		<div class="row mb-3">
 			<div class="col-md-9">
 				<h2 class="display-4">Projected Electoral College Results</h2>
@@ -29,17 +29,15 @@
 			<div class="col-sm-3 m-0">
 				<div class="row">
 					<div class="dropdown">
-						<a class="btn btn-outline-dark dropdown-toggle btn-lg" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<a class="btn btn-outline-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							Democrat
 						</a>
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 						  <a class="dropdown-item" id="Biden" href="#">Joe Biden</a>
 						  <a class="dropdown-item" id="Sanders" href="#">Bernie Sanders</a>
-						  <a class="dropdown-item" id="Warren" href="#">Elizabeth Warren</a>
-						  <a class="dropdown-item" id="Bloomberg" href="#">Michael Bloomberg</a>
 						</div>
 					</div>
-					<button type="button" class="btn btn-outline-dark ml-1 btn-lg" id="National Polls">National Polls</button>
+					<button type="button" class="btn btn-outline-dark ml-1" id="National Polls">National Polls</button>
 					
 					<hr>
 					<div class="lead">Click on any state to access available polling data</div>
@@ -115,7 +113,7 @@
 				</svg>
 			</div>
 			<div class="col-md-3 m-0 p-0" id="polldata">
-				<h2><span id="pollType">Poll data heres here</span></h2>
+				<h2><span id="pollType"><u>Polling data</u>:</span></h2>
 				<div id="polls"></div>
 			</div>
 		</div>

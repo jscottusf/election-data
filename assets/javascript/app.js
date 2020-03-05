@@ -1,21 +1,23 @@
 // Your web app's Firebase configuration
-// var firebaseConfig = {
-//   apiKey: "AIzaSyDqjLNRonSRsP1VbZAxpx9rDnfv3NuDwAc",
-//   authDomain: "election-data-2020.firebaseapp.com",
-//   databaseURL: "https://election-data-2020.firebaseio.com",
-//   projectId: "election-data-2020",
-//   storageBucket: "election-data-2020.appspot.com",
-//   messagingSenderId: "627040919383",
-//   appId: "1:627040919383:web:d569ee8fcdaae97cbb6812"
-// };
-// let database;
+var firebaseConfig = {
+  apiKey: "AIzaSyDqjLNRonSRsP1VbZAxpx9rDnfv3NuDwAc",
+  authDomain: "election-data-2020.firebaseapp.com",
+  databaseURL: "https://election-data-2020.firebaseio.com",
+  projectId: "election-data-2020",
+  storageBucket: "election-data-2020.appspot.com",
+  messagingSenderId: "627040919383",
+  appId: "1:627040919383:web:d569ee8fcdaae97cbb6812"
+};
+let database;
 let polls;
-let pollingData = "National Polls";
+let nationalPolls = [];
+let statePolls = [];
 states;
 // Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+database = firebase.database();
 
-// firebase.initializeApp(firebaseConfig);
-// database = firebase.database();
+
 
 function updateElectionData() {
   $.ajax({
@@ -26,29 +28,45 @@ function updateElectionData() {
       },
       dataType: 'text',
       complete: function() {
-          polls = JSON.stringify(data, null, 2);
-          console.log(polls);
-          //console.log(data);
+        polls = data;
+        sortData();
       }
   })
 }
 
-function getPollingData() {
+function sortData() {
+  //console.log(polls);
   for (var i = 0; i < polls.length; i++) {
-    if (!polls[i].state) {
-      console.log('national polls');
+    if (polls[i].state === "") {
+      nationalPolls.push(polls[i]);
+    }
+    else {
+      statePolls.push(polls[i]);
     }
   }
+  //console.log(nationalPolls);
+  //console.log(statePolls);
 }
-//fivethirtyeight += states[key].ECval;
+
+function getNationalData() {
+  nationalPolls;
+    for (var i = 0; i < nationalPolls.length; i++) {
+      if (nationalPolls[i].answer === "Trump" && nationalPolls[i - 1].answer === 'Biden') {
+        var trumpNum = nationalPolls[i].answer;
+        var opponentNum = nationalPolls[i-1].answer;
+        console.log(opponentNum + ' | ' + trumpNum);
+      }
+    }
+  }
+  
 
 function setStateColors() {
-  var leanD = 'd1d8f5';
-  var likelyD = '5175ac';
-  var safeD = '056caa';
-  var leanR = 'f4907e';
-  var likelyR = 'f87565';
-  var safeR = 'c62523';
+  var leanD = '#7db8f2';
+  var likelyD = '29a2ec';
+  var safeD = '5175ac';
+  var leanR = 'ffc2b5';
+  var likelyR = 'fe9987';
+  var safeR = 'fe6a59';
   var demEC = 0;
   var repEC = 0;
   for (var key in states) {
@@ -87,16 +105,12 @@ function setStateColors() {
 
 }
 
-setStateColors();
-//updateElectionData();
-//getPollingData();
-
 $("path, circle").hover(function(e) {
   //$(this).data('info').empty();
   var state = $(this).attr('id');
   var stateName = states[state].name;
   var partisanLean = states[state].pvi;
-  console.log(state + ' | ' + partisanLean);
+  //console.log(state + ' | ' + partisanLean);
   var infoDiv = $('<div>');
   var stateNameDiv = $('<div>State: ' + stateName + '</div>');
   var ecDiv = $('<div>Electoral Votes: ' + states[state].ECval + '</div>');
@@ -131,5 +145,9 @@ if(ios) {
 
 $('path').on('click', function() {
   var state = $(this).attr('id');
-  console.log(state);
+  //console.log(state);
 })
+
+setStateColors();
+updateElectionData();
+getNationalData();
