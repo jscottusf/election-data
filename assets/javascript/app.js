@@ -21,7 +21,7 @@ database = firebase.database();
 
 function updateElectionData() {
   $.ajax({
-      url: 'http://projects.fivethirtyeight.com/polls-page/president_polls.csv',
+      url: 'https://projects.fivethirtyeight.com/polls-page/president_polls.csv',
       async: false,
       success: function(csvd) {
           data = $.csv.toObjects(csvd);
@@ -44,19 +44,34 @@ function sortData() {
       statePolls.push(polls[i]);
     }
   }
-  //console.log(nationalPolls);
+  console.log(nationalPolls);
   //console.log(statePolls);
 }
 
 function getNationalData() {
   nationalPolls;
+  var opponentTotal = 0;
+  var opponentAverage = 0;
+  var trumpTotal = 0;
+  var trumpAverage = 0;
+  var pollCount = 0;
     for (var i = 0; i < nationalPolls.length; i++) {
       if (nationalPolls[i].answer === "Trump" && nationalPolls[i - 1].answer === 'Biden') {
-        var trumpNum = nationalPolls[i].answer;
-        var opponentNum = nationalPolls[i-1].answer;
-        console.log(opponentNum + ' | ' + trumpNum);
+        var trump = nationalPolls[i].answer;
+        var trumpNum = parseFloat(nationalPolls[i].pct);
+        var opponent = nationalPolls[i-1].answer;
+        var opponentNum = parseFloat(nationalPolls[i-1].pct);
+        pollCount++;
+        opponentTotal += opponentNum;
+        trumpTotal += trumpNum;
       }
     }
+    opponentAverage = opponentTotal / pollCount;
+    opponentAverage = opponentAverage.toFixed(2)+"%";
+    trumpAverage = trumpTotal / pollCount;
+    trumpAverage = trumpAverage.toFixed(2)+"%";
+    console.log(opponent + ' | ' + trump);
+    console.log(opponentAverage + ' | ' + trumpAverage);
   }
   
 
