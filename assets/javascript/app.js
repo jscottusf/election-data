@@ -13,6 +13,7 @@ let polls;
 let nationalPolls = [];
 let statePolls = [];
 states;
+let demName;
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 database = firebase.database();
@@ -44,32 +45,50 @@ function sortData() {
       statePolls.push(polls[i]);
     }
   }
-  console.log(nationalPolls);
+  //console.log(nationalPolls);
   //console.log(statePolls);
 }
 
-function getNationalData() {
+function getNationalData(dem) {
+  if (!dem) {
+    dem = "Biden";
+  }
   nationalPolls;
   var opponentTotal = 0;
   var opponentAverage = 0;
   var trumpTotal = 0;
   var trumpAverage = 0;
   var pollCount = 0;
+  var displayCount = 0;
     for (var i = 0; i < nationalPolls.length; i++) {
-      if (nationalPolls[i].answer === "Trump" && nationalPolls[i - 1].answer === 'Biden') {
+      if (nationalPolls[i].answer === "Trump" && nationalPolls[i - 1].answer === dem) {
         var trump = nationalPolls[i].answer;
         var trumpNum = parseFloat(nationalPolls[i].pct);
         var opponent = nationalPolls[i-1].answer;
         var opponentNum = parseFloat(nationalPolls[i-1].pct);
+        var pollsterName = nationalPolls[i].display_name;
         pollCount++;
+        displayCount++
         opponentTotal += opponentNum;
         trumpTotal += trumpNum;
+        if (displayCount < 5) {
+          var pollDiv = $('<div>');
+          var pollsterDiv = $('<div>' + pollsterName + '</div>');
+          var pollResultDiv = $('<div>' + opponent + ': ' + opponentNum + ' | ' + trump + ': ' + trumpNum + '</div><hr>');
+          $(pollDiv).append(pollsterDiv, pollResultDiv);
+          $('#polls').append(pollDiv);
+        }
       }
     }
     opponentAverage = opponentTotal / pollCount;
     opponentAverage = opponentAverage.toFixed(2)+"%";
     trumpAverage = trumpTotal / pollCount;
     trumpAverage = trumpAverage.toFixed(2)+"%";
+    var natAverageDiv = $('<div>');
+    var headDiv = $('<h4>National Average</h4>')
+    var pollAverageDiv = $('<div>' + opponent + ': ' + opponentAverage + ' | ' + trump + ': ' + trumpAverage + '</div><hr><h4>Recent Polls:</h4><hr>');
+    $(natAverageDiv).append(headDiv, pollAverageDiv);
+    $('#polls').prepend(natAverageDiv);
     console.log(opponent + ' | ' + trump);
     console.log(opponentAverage + ' | ' + trumpAverage);
   }
@@ -160,7 +179,14 @@ if(ios) {
 
 $('path').on('click', function() {
   var state = $(this).attr('id');
-  //console.log(state);
+  console.log(state);
+})
+
+$('.dropdown-item').on('click', function(event) {
+  event.preventDefault();
+  demName = $(this).attr('id');
+  $('#polls').empty();
+  getNationalData(demName);
 })
 
 setStateColors();
