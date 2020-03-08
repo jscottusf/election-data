@@ -13,7 +13,7 @@ const states = {
     "HI" : {"name": "Hawaii", "pvi": "D+18", "ECval": 4, "arr": 11},
     "ID" : {"name": "Idaho", "pvi": "R+19", "ECval": 4, "arr": 12},
     "IL" : {"name": "Illinois", "pvi": "D+7", "ECval": 20, "arr": 13},
-    "IN" : {"name": "Indiana", "pvi": "R+9", "ECval": 11, "arr":140},
+    "IN" : {"name": "Indiana", "pvi": "R+9", "ECval": 11, "arr":14},
     "IA" : {"name": "Iowa", "pvi": "R+3", "ECval": 6, "arr": 15},
     "KS" : {"name": "Kansas", "pvi": "R+13", "ECval": 6, "arr":16},
     "KY" : {"name": "Kentucky", "pvi": "R+15", "ECval": 8, "arr": 17},
@@ -51,109 +51,3 @@ const states = {
     "WI" : {"name": "Wisconsin", "pvi": "R+1", "ECval": 10, "arr": 49},
     "WY" : {"name": "Wyoming", "pvi": "R+25", "ECval": 3, "arr": 50}
 };
-
-//saving in case i mess this up
-// function getNationalData(dem) {
-//     if (!dem) {
-//       dem = "Biden";
-//     }
-//     nationalPolls;
-//     var opponentTotal = 0;
-//     var opponentAverage = 0;
-//     var trumpTotal = 0;
-//     var trumpAverage = 0;
-//     var pollCount = 0;
-//     var displayCount = 0;
-//       for (var i = 0; i < nationalPolls.length; i++) {
-//         if (nationalPolls[i].answer === "Trump" && nationalPolls[i - 1].answer === dem) {
-//           var trump = nationalPolls[i].answer;
-//           var trumpNum = parseFloat(nationalPolls[i].pct);
-//           var opponent = nationalPolls[i-1].answer;
-//           var opponentNum = parseFloat(nationalPolls[i-1].pct);
-//           var pollsterName = nationalPolls[i].display_name;
-//           pollCount++;
-//           displayCount++
-//           opponentTotal += opponentNum;
-//           trumpTotal += trumpNum;
-//           if (displayCount < 5) {
-//             var pollDiv = $('<div>');
-//             var pollsterDiv = $('<div>' + pollsterName + '</div>');
-//             var pollResultDiv = $('<div>' + opponent + ' ' + opponentNum + ' | ' + trump + ' ' + trumpNum + '</div><hr>');
-//             $(pollDiv).append(pollsterDiv, pollResultDiv);
-//             $('#polls').append(pollDiv);
-//           }
-//         }
-//       }
-//       opponentAverage = opponentTotal / pollCount;
-//       opponentAverage = opponentAverage.toFixed(2)+"%";
-//       trumpAverage = trumpTotal / pollCount;
-//       trumpAverage = trumpAverage.toFixed(2)+"%";
-//       var natAverageDiv = $('<div>');
-//       var headDiv = $('<h4>National Average</h4>')
-//       var pollAverageDiv = $('<div>' + opponent + ': ' + opponentAverage + ' | ' + trump + ': ' + trumpAverage + '</div><hr><h4>Recent Polls:</h4><hr>');
-//       $(natAverageDiv).append(headDiv, pollAverageDiv);
-//       $('#polls').prepend(natAverageDiv);
-//       console.log(opponent + ' | ' + trump);
-//       console.log(opponentAverage + ' | ' + trumpAverage);
-//       $('#demName').empty();
-//       $('#demName').append(dem + ' ');
-//     }
-
-// function sortData() {
-//   //console.log(polls);
-//   for (var i = 0; i < allPolls.length; i++) {
-//     if (allPolls[i].state === "") {
-//       allPolls[i].state += "National"
-//       nationalPolls.push(allPolls[i]);
-//     }
-//     else {
-//       statePolls.push(allPolls[i]);
-//     }
-//   }
-//   //console.log(nationalPolls);
-//   //console.log(statePolls);
-// }
-
-// function setStateColors() {
-//     var leanD = '#7fb9f3';
-//     var likelyD = '#6494c4';
-//     var safeD = '#5175ac';
-//     var leanR = '#ffc2b5';
-//     var likelyR = '#fe9987';
-//     var safeR = '#fe6a59';
-//     var demEC = 0;
-//     var repEC = 0;
-//     for (var key in states) {
-//       var pvi = states[key].pvi.split('+');
-//       var party = pvi[0];
-//       var lean = parseFloat(pvi[1]);
-//       if (party === "R" && lean <=2) {
-//         $('#' + key + '').css('fill', leanR);
-//         repEC += states[key].ECval;
-//       }
-//       else if (party === "R" && lean > 2  && lean <= 5) {
-//         $('#' + key + '').css('fill', likelyR);
-//         repEC += states[key].ECval;
-//       }
-//       else if (party === "R" && lean > 5) {
-//         $('#' + key + '').css('fill', safeR);
-//         repEC += states[key].ECval;
-//       }
-//       else if (party === "D" && lean <=2) {
-//         $('#' + key + '').css('fill', leanD);
-//         demEC += states[key].ECval;
-//       }
-//       else if (party === "D" && lean > 2  && lean <= 5) {
-//         $('#' + key + '').css('fill', likelyD);
-//         demEC += states[key].ECval;
-//       }
-//       else if (party === "D" && lean > 5) {
-//         $('#' + key + '').css('fill', safeD);
-//         demEC += states[key].ECval;
-//       }  
-//     }
-//     $('#DEMcount').empty();
-//     $('#DEMcount').append(demEC);
-//     $('#GOPcount').empty();
-//     $('#GOPcount').append(repEC);
-//   }
