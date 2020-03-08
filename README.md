@@ -1,6 +1,6 @@
 # 2020 | Election Data
 
-- deployed at https://jscottusf.github.io/election-data/
+- Deployed at https://jscottusf.github.io/election-data/
 - Using FiveThirtyEight data to track 2020 general election polling data
 - Interactive map which displays polling data and rough estimate of election day probabilities
 - Click on any state to see up to date polling data and averages
