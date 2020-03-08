@@ -12,17 +12,20 @@
 </head>
 <body>
 	<div class="jumbotron jumbotron-fluid">
-		<div class="container">
+		<div class="container" id="jumbotron">
 		  <h1 class="display-4">2020 | Election Data</h1>
 		  <p class="lead">Your source for polling data for all fifty states. Powered by FiveThirtyEight Data.</p>
+		  <p class="lead">
+			<a class="btn btn-primary btn-lg" href="#" id="go">Show me the data</a>
+		  </p>
 		</div>
 	</div>
 	<div class="container">
 		<div class="row mb-3">
 			<div class="col-md-9">
 				<h3 class="display-4">
-					<span id="demName">Biden: </span><span id="DEMcount">0</span>
-					<span>Trump: </span><span id="GOPcount">0</span>
+					<span id="demName"></span><span id="DEMcount">0</span> |
+					<span>Trump </span><span id="GOPcount">0</span>
 				</h3>
 				<div class="lead">Click on any state to access available polling data</div>
 			</div>
@@ -37,7 +40,7 @@
 						  <a class="dropdown-item" id="Sanders" href="#">Bernie Sanders</a>
 						</div>
 					</div>
-					<button type="button" class="btn btn-outline-dark ml-1" id="National Polls">National Polls</button>
+					<button type="button" class="btn btn-outline-dark ml-1" id="National-Polls">National Polls</button>
 				</div>
 			</div>
 		</div>

@@ -51,56 +51,65 @@ const states = {
     "WI" : {"name": "Wisconsin", "pvi": "R+1", "ECval": 10},
     "WY" : {"name": "Wyoming", "pvi": "R+25", "ECval": 3}
 };
-// const partisanLean = {
-// 'Alabama': ,
-// 'Alaska':	'R+9',
-// 'Arizona':	'R+5',
-// 'Arkansas':	'R+15',
-// 'California':	'D+12',
-// 'Colorado':	'D+1',
-// 'Connecticut': 'D+6',
-// 'Delaware	': 'D+6',
-// 'Florida': 'R+2',
-// 'Georgia': 'R+5',
-// 'Hawaii':	'D+18',
-// 'Idaho': 'R+19',
-// 'Illinois': 'D+7',
-// 'Indiana': 'R+9',
-// 'Iowa':	'R+3',
-// 'Kansas': 'R+13',
-// 'Kentucky':	'R+15',
-// 'Louisiana': 'R+11',
-// 'Maine': 'D+3',
-// 'Maryland': 'D+12',
-// 'Massachusetts': 'D+12',
-// 'Michigan':	'D+1',
-// 'Minnesota': 'D+1',
-// 'Mississippi': 'R+9',
-// 'Missouri':	'R+9',
-// 'Montana': 'R+11',
-// 'Nebraska': 'R+14',
-// 'Nevada':	'D+1',
-// 'New Hampshire': 'D+1',
-// 'New Jersey':	'D+7',
-// 'New Mexico': 'D+3',
-// 'New York':	'D+12',
-// 'North Carolina':	'R+3',
-// 'North Dakota':	'R+17',
-// 'Ohio':	'R+3',
-// 'Oklahoma':	'R+20',
-// 'Oregon':	'D+5',
-// 'Pennsylvania':	'D+1',
-// 'Rhode Island':	'D+10',
-// 'South Carolina': 'R+8',
-// 'South Dakota':	'R+14',
-// 'Tennessee': 'R+14',
-// 'Texas': 'R+8',
-// 'Utah':	'R+20',
-// 'Vermont': 'D+15',
-// 'Virginia':	'D+1',
-// 'Washington':	'D+7',
-// 'West Virginia': 'R+19',
-// 'Wisconsin': 'R+1',
-// 'Wyoming': 'R+25',
-// "District Of Columbia": "D+30"
+
+//saving in case i mess this up
+// function getNationalData(dem) {
+//     if (!dem) {
+//       dem = "Biden";
+//     }
+//     nationalPolls;
+//     var opponentTotal = 0;
+//     var opponentAverage = 0;
+//     var trumpTotal = 0;
+//     var trumpAverage = 0;
+//     var pollCount = 0;
+//     var displayCount = 0;
+//       for (var i = 0; i < nationalPolls.length; i++) {
+//         if (nationalPolls[i].answer === "Trump" && nationalPolls[i - 1].answer === dem) {
+//           var trump = nationalPolls[i].answer;
+//           var trumpNum = parseFloat(nationalPolls[i].pct);
+//           var opponent = nationalPolls[i-1].answer;
+//           var opponentNum = parseFloat(nationalPolls[i-1].pct);
+//           var pollsterName = nationalPolls[i].display_name;
+//           pollCount++;
+//           displayCount++
+//           opponentTotal += opponentNum;
+//           trumpTotal += trumpNum;
+//           if (displayCount < 5) {
+//             var pollDiv = $('<div>');
+//             var pollsterDiv = $('<div>' + pollsterName + '</div>');
+//             var pollResultDiv = $('<div>' + opponent + ' ' + opponentNum + ' | ' + trump + ' ' + trumpNum + '</div><hr>');
+//             $(pollDiv).append(pollsterDiv, pollResultDiv);
+//             $('#polls').append(pollDiv);
+//           }
+//         }
+//       }
+//       opponentAverage = opponentTotal / pollCount;
+//       opponentAverage = opponentAverage.toFixed(2)+"%";
+//       trumpAverage = trumpTotal / pollCount;
+//       trumpAverage = trumpAverage.toFixed(2)+"%";
+//       var natAverageDiv = $('<div>');
+//       var headDiv = $('<h4>National Average</h4>')
+//       var pollAverageDiv = $('<div>' + opponent + ': ' + opponentAverage + ' | ' + trump + ': ' + trumpAverage + '</div><hr><h4>Recent Polls:</h4><hr>');
+//       $(natAverageDiv).append(headDiv, pollAverageDiv);
+//       $('#polls').prepend(natAverageDiv);
+//       console.log(opponent + ' | ' + trump);
+//       console.log(opponentAverage + ' | ' + trumpAverage);
+//       $('#demName').empty();
+//       $('#demName').append(dem + ' ');
+//     }
+
+// function sortData() {
+//   //console.log(polls);
+//   for (var i = 0; i < allPolls.length; i++) {
+//     if (allPolls[i].state === "") {
+//       allPolls[i].state += "National"
+//       nationalPolls.push(allPolls[i]);
+//     }
+//     else {
+//       statePolls.push(allPolls[i]);
+//     }
+//   }
+//   //console.log(nationalPolls);
+//   //console.log(statePolls);
 // }

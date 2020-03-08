@@ -9,16 +9,18 @@ var firebaseConfig = {
   appId: "1:627040919383:web:d569ee8fcdaae97cbb6812"
 };
 let database;
-let polls;
 let nationalPolls = [];
+let electoralCollege = [];
+let allPolls;
+let polls = [];
 let statePolls = [];
 states;
-let demName;
+let demName = "Biden";
+let pollType = "National";
+let click;
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 database = firebase.database();
-
-
 
 function updateElectionData() {
   $.ajax({
@@ -29,7 +31,7 @@ function updateElectionData() {
       },
       dataType: 'text',
       complete: function() {
-        polls = data;
+        allPolls = data;
         sortData();
       }
   })
@@ -37,70 +39,153 @@ function updateElectionData() {
 
 function sortData() {
   //console.log(polls);
-  for (var i = 0; i < polls.length; i++) {
-    if (polls[i].state === "") {
-      nationalPolls.push(polls[i]);
+  for (var i = 0; i < allPolls.length; i++) {
+    if (allPolls[i].state === "") {
+      allPolls[i].state += "National";
+      nationalPolls.push(allPolls[i]);
     }
     else {
-      statePolls.push(polls[i]);
+      statePolls.push(allPolls[i]);
     }
   }
-  //console.log(nationalPolls);
-  //console.log(statePolls);
 }
 
-function getNationalData(dem) {
-  if (!dem) {
-    dem = "Biden";
+let State = function(key, states) {
+  this.ab = key;
+  this.name = states[key].name;
+  this.pvi = states[key].pvi;
+  this.bidenTotal = 0;
+  this.trumpBidenTotal = 0;
+  this.bidenPollCount = 0;
+  this.bidenAverage = function() {
+    bidenAverage = this.bidenTotal / this.bidenPollCount;
+    bidenAverage = bidenAverage.toFixed(2)+"%";
+    return bidenAverage;
+  };
+  this.trumpBidenAverage = function() {
+    trumpBidenAverage = this.trumpBidenTotal / this.bidenPollCount;
+    trumpBidenAverage = trumpBidenAverage.toFixed(2)+"%";
+    return trumpBidenAverage;
+  };
+  this.sandersTotal = 0;
+  this.trumpSandersTotal = 0;
+  this.sandersPollCount = 0;
+  this.sandersAverage = function() {
+    sandersAverage = this.sandersTotal / this.sandersPollCount;
+    sandersAverage = sandersAverage.toFixed(2)+"%";
+    return sandersAverage;
+  };
+  this.trumpSandersAverage = function() {
+    trumpSandersAverage = this.trumpSandersTotal / this.sandersPollCount;
+    trumpSandersAverage = trumpSandersAverage.toFixed(2)+"%";
+    return trumpSandersAverage;
+  };
+}
+
+function esimateOutcome() {
+  for (var key in states) {
+    var state = states[key].name;
+    state = new State(key, states);
+    electoralCollege.push(state);
   }
-  nationalPolls;
+  for (var i = 0; i < electoralCollege.length; i++) {
+    for (var j = 0; j < statePolls.length; j++) {
+      if (electoralCollege[i].name === statePolls[j].state) {
+        if (statePolls[j].answer === "Trump" && statePolls[j - 1].answer === "Biden") {
+          electoralCollege[i].trumpBidenTotal += parseFloat(statePolls[j].pct);
+          electoralCollege[i].bidenTotal += parseFloat(statePolls[j-1].pct);
+          electoralCollege[i].bidenPollCount++
+        }
+        if (statePolls[j].answer === "Trump" && statePolls[j - 1].answer === "Sanders") {
+          electoralCollege[i].sandersBidenTotal += parseFloat(statePolls[j].pct);
+          electoralCollege[i].sandersTotal += parseFloat(statePolls[j-1].pct);
+          electoralCollege[i].sandersPollCount++;
+        }
+      }
+    }
+  }
+  console.log(electoralCollege[33].bidenAverage() + ' | ' + electoralCollege[33].trumpBidenAverage());
+}
+
+function appendData(dem, state) {
+  polls = [];
+  for (var i = 0; i < allPolls.length; i++) {
+    if (allPolls[i].state === state) {
+      polls.push(allPolls[i]);
+    }
+  }
   var opponentTotal = 0;
   var opponentAverage = 0;
   var trumpTotal = 0;
   var trumpAverage = 0;
   var pollCount = 0;
   var displayCount = 0;
-    for (var i = 0; i < nationalPolls.length; i++) {
-      if (nationalPolls[i].answer === "Trump" && nationalPolls[i - 1].answer === dem) {
-        var trump = nationalPolls[i].answer;
-        var trumpNum = parseFloat(nationalPolls[i].pct);
-        var opponent = nationalPolls[i-1].answer;
-        var opponentNum = parseFloat(nationalPolls[i-1].pct);
-        var pollsterName = nationalPolls[i].display_name;
+  if (polls.length > 0) {
+    for (var i = 0; i < polls.length; i++) {
+      if (polls[i].answer === "Trump" && polls[i - 1].answer === dem) {
+        var trump = polls[i].answer;
+        var trumpNum = parseFloat(polls[i].pct);
+        var opponent = polls[i-1].answer;
+        var opponentNum = parseFloat(polls[i-1].pct);
+        var pollsterName = polls[i].display_name;
+        var state = polls[i].state;
         pollCount++;
         displayCount++
         opponentTotal += opponentNum;
         trumpTotal += trumpNum;
-        if (displayCount < 5) {
+        if (displayCount < 7) {
           var pollDiv = $('<div>');
           var pollsterDiv = $('<div>' + pollsterName + '</div>');
-          var pollResultDiv = $('<div>' + opponent + ': ' + opponentNum + ' | ' + trump + ': ' + trumpNum + '</div><hr>');
+          var pollResultDiv = $('<div>' + opponent + ' ' + opponentNum + ' | ' + trump + ' ' + trumpNum + '</div><hr>');
           $(pollDiv).append(pollsterDiv, pollResultDiv);
           $('#polls').append(pollDiv);
         }
       }
     }
+  }
+  else {
+      $('#polls').html('<div>No polling data available yet</div>')
+  }
+  if (polls.length > 0) {
     opponentAverage = opponentTotal / pollCount;
     opponentAverage = opponentAverage.toFixed(2)+"%";
     trumpAverage = trumpTotal / pollCount;
     trumpAverage = trumpAverage.toFixed(2)+"%";
     var natAverageDiv = $('<div>');
-    var headDiv = $('<h4>National Average</h4>')
-    var pollAverageDiv = $('<div>' + opponent + ': ' + opponentAverage + ' | ' + trump + ': ' + trumpAverage + '</div><hr><h4>Recent Polls:</h4><hr>');
-    $(natAverageDiv).append(headDiv, pollAverageDiv);
-    $('#polls').prepend(natAverageDiv);
-    console.log(opponent + ' | ' + trump);
-    console.log(opponentAverage + ' | ' + trumpAverage);
+    var headDiv = $('<h4>' + state + ' Average</h4>')
+    var pollAverageDiv = $('<div>' + opponent + ' ' + opponentAverage + ' | ' + trump + ' ' + trumpAverage + '</div><hr><h4>Recent Polls:</h4><hr>');
+  }
+  else {
+    var pvi = states[click].pvi.split('+');
+    var party = pvi[0];
+    var lean = parseFloat(pvi[1]);
+    if (party === 'R') {
+      trumpAverage = (50 + lean);
+      opponentAverage = (50 - lean);
+    }
+    else {
+      trumpAverage = (50 - lean);
+      opponentAverage = (50 + lean);
+    }
+    var natAverageDiv = $('<div>');
+    var headDiv = $('<h4>' + state + ' Projected Outcome Based on Partisan Lean</h4>')
+    var pollAverageDiv = $('<div>' + dem + ' ' + opponentAverage + ' | Trump ' + trumpAverage + '</div><hr><h4>Recent Polls:</h4><hr>');
+  }
+  
+  $(natAverageDiv).append(headDiv, pollAverageDiv);
+  $('#polls').prepend(natAverageDiv);
+  $('#demName').empty();
+  $('#demName').append(dem + ' ');
   }
   
 
 function setStateColors() {
-  var leanD = '#7db8f2';
-  var likelyD = '29a2ec';
-  var safeD = '5175ac';
-  var leanR = 'ffc2b5';
-  var likelyR = 'fe9987';
-  var safeR = 'fe6a59';
+  var leanD = '#7fb9f3';
+  var likelyD = '#6494c4';
+  var safeD = '#5175ac';
+  var leanR = '#ffc2b5';
+  var likelyR = '#fe9987';
+  var safeR = '#fe6a59';
   var demEC = 0;
   var repEC = 0;
   for (var key in states) {
@@ -177,18 +262,39 @@ if(ios) {
   });
 }
 
-$('path').on('click', function() {
-  var state = $(this).attr('id');
-  console.log(state);
+//on form click
+$('#go').on('click', function(event) {
+  event.preventDefault();
+  //scroll down to #breweries <div>
+  $('html, body').animate({
+      scrollTop: $("#demName").offset().top - 10
+ }, 500);
+});
+
+$('path').on('click', function(event) {
+  event.preventDefault();
+  $('#polls').empty();
+  click = $(this).attr('id');
+  pollType = states[click].name;
+  appendData(demName, pollType);
 })
 
 $('.dropdown-item').on('click', function(event) {
   event.preventDefault();
   demName = $(this).attr('id');
   $('#polls').empty();
-  getNationalData(demName);
+  appendData(demName, pollType);
+})
+
+$('#National-Polls').on('click', function(event) {
+  event.preventDefault();
+  $('#polls').empty();
+  pollType = "National"
+  appendData(demName, pollType);
 })
 
 setStateColors();
 updateElectionData();
-getNationalData();
+esimateOutcome();
+appendData(demName, pollType);
+//console.log(statePolls);
