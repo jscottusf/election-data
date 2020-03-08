@@ -1,4 +1,4 @@
-# election-data
+# 2020 | Election Data
 
 - deployed at https://jscottusf.github.io/election-data/
 - Using FiveThirtyEight data to track 2020 general election polling data
