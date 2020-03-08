@@ -18,6 +18,12 @@ states;
 let demName = "Biden";
 let pollType = "National";
 let click;
+let rAverage;
+let dAverage;
+let margin;
+let stateWinner;
+let demEC;
+let repEC;
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 database = firebase.database();
@@ -54,31 +60,89 @@ let State = function(key, states) {
   this.ab = key;
   this.name = states[key].name;
   this.pvi = states[key].pvi;
+  this.ECval = states[key].ECval;
   this.bidenTotal = 0;
   this.trumpBidenTotal = 0;
   this.bidenPollCount = 0;
   this.bidenAverage = function() {
     bidenAverage = this.bidenTotal / this.bidenPollCount;
-    bidenAverage = bidenAverage.toFixed(2)+"%";
+    bidenAverage = bidenAverage.toFixed(2);
     return bidenAverage;
   };
   this.trumpBidenAverage = function() {
     trumpBidenAverage = this.trumpBidenTotal / this.bidenPollCount;
-    trumpBidenAverage = trumpBidenAverage.toFixed(2)+"%";
+    trumpBidenAverage = trumpBidenAverage.toFixed(2);
     return trumpBidenAverage;
+  };
+  this.leanAverage = function() {
+    var pvi = this.pvi.split('+');
+    var party = pvi[0];
+    var lean = parseFloat(pvi[1]);
+    if (party === 'R') {
+      rAverage = (50 + (lean/2)).toFixed(2);
+      dAverage = (50 - (lean/2)).toFixed(2);
+    }
+    else {
+      rAverage = (50 - (lean/2)).toFixed(2);
+      dAverage = (50 + (lean/2)).toFixed(2);
+    }
+  };
+  this.bidenProjection = function() {
+    this.leanAverage();
+    var bidenNum = this.bidenAverage();
+    if (this.bidenPollCount > 0) {
+      bidenProjection = ((dAverage * 0.25) + (bidenNum * 0.75)).toFixed(2)
+      return bidenProjection;
+    }
+    else {
+      return dAverage;
+    }
+  };
+  this.trumpBidenProjection = function() {
+    this.leanAverage();
+    var trumpNum = this.trumpBidenAverage();
+    if (this.bidenPollCount > 0) {
+      trumpBidenProjection = ((rAverage * 0.25) + (trumpNum * 0.75)).toFixed(2);
+      return trumpBidenProjection
+    }
+    else {
+      return rAverage;
+    }
   };
   this.sandersTotal = 0;
   this.trumpSandersTotal = 0;
   this.sandersPollCount = 0;
   this.sandersAverage = function() {
     sandersAverage = this.sandersTotal / this.sandersPollCount;
-    sandersAverage = sandersAverage.toFixed(2)+"%";
+    sandersAverage = sandersAverage.toFixed(2);
     return sandersAverage;
   };
   this.trumpSandersAverage = function() {
     trumpSandersAverage = this.trumpSandersTotal / this.sandersPollCount;
-    trumpSandersAverage = trumpSandersAverage.toFixed(2)+"%";
+    trumpSandersAverage = trumpSandersAverage.toFixed(2);
     return trumpSandersAverage;
+  };
+  this.sandersProjection = function() {
+    this.leanAverage();
+    var sandersNum = this.sandersAverage();
+    if (this.sandersPollCount > 0) {
+      sandersProjection = ((dAverage * 0.25) + (sandersNum * 0.75)).toFixed(2);
+      return sandersProjection;
+    }
+    else {
+      return dAverage;
+    }
+  };
+  this.trumpSandersProjection = function() {
+    this.leanAverage();
+    var trumpNum = this.trumpSandersAverage();
+    if (this.sandersPollCount > 0) {
+      trumpSandersProjection = ((rAverage * 0.25) + (trumpNum * 0.75)).toFixed(2);
+      return trumpSandersProjection;
+    }
+    else {
+      return rAverage;
+    }
   };
 }
 
@@ -97,14 +161,13 @@ function esimateOutcome() {
           electoralCollege[i].bidenPollCount++
         }
         if (statePolls[j].answer === "Trump" && statePolls[j - 1].answer === "Sanders") {
-          electoralCollege[i].sandersBidenTotal += parseFloat(statePolls[j].pct);
+          electoralCollege[i].trumpSandersTotal += parseFloat(statePolls[j].pct);
           electoralCollege[i].sandersTotal += parseFloat(statePolls[j-1].pct);
           electoralCollege[i].sandersPollCount++;
         }
       }
     }
   }
-  console.log(electoralCollege[33].bidenAverage() + ' | ' + electoralCollege[33].trumpBidenAverage());
 }
 
 function appendData(dem, state) {
@@ -160,12 +223,12 @@ function appendData(dem, state) {
     var party = pvi[0];
     var lean = parseFloat(pvi[1]);
     if (party === 'R') {
-      trumpAverage = (50 + lean);
-      opponentAverage = (50 - lean);
+      trumpAverage = (50 + (lean/2)).toFixed(2);
+      opponentAverage = (50 - (lean/2)).toFixed(2);
     }
     else {
-      trumpAverage = (50 - lean);
-      opponentAverage = (50 + lean);
+      trumpAverage = (50 - (lean/2)).toFixed(2);
+      opponentAverage = (50 + (lean/2)).toFixed(2);
     }
     var natAverageDiv = $('<div>');
     var headDiv = $('<h4>' + state + ' Projected Outcome Based on Partisan Lean</h4>')
@@ -176,65 +239,89 @@ function appendData(dem, state) {
   $('#polls').prepend(natAverageDiv);
   $('#demName').empty();
   $('#demName').append(dem + ' ');
-  }
-  
+}
 
 function setStateColors() {
+  $('#DEMcount').empty();
+  $('#GOPcount').empty();
   var leanD = '#7fb9f3';
   var likelyD = '#6494c4';
   var safeD = '#5175ac';
   var leanR = '#ffc2b5';
   var likelyR = '#fe9987';
   var safeR = '#fe6a59';
-  var demEC = 0;
-  var repEC = 0;
-  for (var key in states) {
-    var pvi = states[key].pvi.split('+');
-    var party = pvi[0];
-    var lean = parseFloat(pvi[1]);
-    if (party === "R" && lean <=2) {
-      $('#' + key + '').css('fill', leanR);
-      repEC += states[key].ECval;
+  demEC = 0;
+  repEC = 0;
+  for (var i = 0; i < electoralCollege.length; i++) {
+    console.log(demEC);
+    console.log(demEC);
+    if (demName === "Biden") {
+      stateNumOpponent = electoralCollege[i].bidenProjection();
+      stateNumTrump = electoralCollege[i].trumpBidenProjection();
     }
-    else if (party === "R" && lean > 2  && lean <= 5) {
-      $('#' + key + '').css('fill', likelyR);
-      repEC += states[key].ECval;
+    if (demName === "Sanders") {
+      stateNumOpponent = electoralCollege[i].sandersProjection();
+      stateNumTrump = electoralCollege[i].trumpSandersProjection();
     }
-    else if (party === "R" && lean > 5) {
-      $('#' + key + '').css('fill', safeR);
-      repEC += states[key].ECval;
+    margin = 0;
+    stateWinner = "";
+    if (stateNumOpponent > stateNumTrump) {
+      margin = stateNumOpponent - stateNumTrump;
+      winner = "D"
     }
-    else if (party === "D" && lean <=2) {
-      $('#' + key + '').css('fill', leanD);
-      demEC += states[key].ECval;
+    else {
+      margin = stateNumTrump - stateNumOpponent;
+      winner = "R"
     }
-    else if (party === "D" && lean > 2  && lean <= 5) {
-      $('#' + key + '').css('fill', likelyD);
-      demEC += states[key].ECval;
+    if (winner === "R" && margin <=2) {
+      $('#' + electoralCollege[i].ab + '').css('fill', leanR);
+      repEC += electoralCollege[i].ECval;
     }
-    else if (party === "D" && lean > 5) {
-      $('#' + key + '').css('fill', safeD);
-      demEC += states[key].ECval;
+    else if (winner === "R" && margin > 2  && margin <= 5) {
+      $('#' + electoralCollege[i].ab + '').css('fill', likelyR);
+      repEC += electoralCollege[i].ECval;
+    }
+    else if (winner === "R" && margin > 5) {
+      $('#' + electoralCollege[i].ab + '').css('fill', safeR);
+      repEC += electoralCollege[i].ECval;
+    }
+    else if (winner === "D" && margin <=2) {
+      $('#' + electoralCollege[i].ab + '').css('fill', leanD);
+      demEC += electoralCollege[i].ECval;
+    }
+    else if (winner === "D" && margin > 2  && margin <= 5) {
+      $('#' + electoralCollege[i].ab + '').css('fill', likelyD);
+      demEC += electoralCollege[i].ECval;
+    }
+    else if (winner === "D" && margin > 5) {
+      $('#' + electoralCollege[i].ab + '').css('fill', safeD);
+      demEC += electoralCollege[i].ECval;
     }  
-  }
-  $('#DEMcount').empty();
-  $('#DEMcount').append(demEC);
-  $('#GOPcount').empty();
-  $('#GOPcount').append(repEC);
-
+  } 
+  $('#DEMcount').text(demEC);
+  $('#GOPcount').text(repEC);
 }
 
 $("path, circle").hover(function(e) {
   //$(this).data('info').empty();
+  e.preventDefault();
   var state = $(this).attr('id');
   var stateName = states[state].name;
-  var partisanLean = states[state].pvi;
+  var id = states[state].arr;
   //console.log(state + ' | ' + partisanLean);
   var infoDiv = $('<div>');
-  var stateNameDiv = $('<div>State: ' + stateName + '</div>');
+  var stateNameDiv = $('<div>' + stateName + ' Estimate</div>');
   var ecDiv = $('<div>Electoral Votes: ' + states[state].ECval + '</div>');
-  var partisanLeanDiv = $('<div>Partisan Lean: ' + partisanLean + '</div>');
-  $(infoDiv).append(stateNameDiv, partisanLeanDiv, ecDiv);
+  if (demName === "Biden") {
+    var stateNumOpponent = electoralCollege[id].bidenProjection();
+    var stateNumTrump = electoralCollege[id].trumpBidenProjection();
+  }
+  else {
+    var stateNumOpponent = electoralCollege[id].sandersProjection();
+    var stateNumTrump = electoralCollege[id].trumpSandersProjection();
+  }
+  var projectedOutcomeDiv = $('<div>'+ demName + ' ' + stateNumOpponent + ' | Trump ' + stateNumTrump + '</div>');
+  $(infoDiv).append(stateNameDiv, projectedOutcomeDiv, ecDiv);
   $('#info-box').css('display','block');
   $('#info-box').html(infoDiv);
 });
@@ -284,17 +371,18 @@ $('.dropdown-item').on('click', function(event) {
   demName = $(this).attr('id');
   $('#polls').empty();
   appendData(demName, pollType);
+  setStateColors();
 })
 
 $('#National-Polls').on('click', function(event) {
   event.preventDefault();
   $('#polls').empty();
-  pollType = "National"
+  pollType = "National";
   appendData(demName, pollType);
 })
 
-setStateColors();
 updateElectionData();
-esimateOutcome();
 appendData(demName, pollType);
+esimateOutcome();
+setStateColors();
 //console.log(statePolls);
