@@ -15,7 +15,7 @@
 		<div class="container" id="jumbotron">
 		  <h1 class="display-4">2020 | Election Data</h1>
 		  <p class="lead">Powered by FiveThirtyEight Data.</p>
-		  <p class="lead">Estimates determined by state partisan lean and state polling average.</p>
+		  <p class="lead">Estimates determined by state partisan lean and polling average.</p>
 		  <p class="lead">
 			<a class="btn btn-primary btn-lg" href="#" id="go">Show me the data</a>
 		  </p>
@@ -46,8 +46,8 @@
 				<div class="row">
 					<form>
 						<div class="form-group">
-							<label for="customRange2">Adjust weight of polls 25% | 50% | 75%</label>
-							<input type="range" class="custom-range" min=".25" max=".75" step="0.25" id="leanWeight">
+							<label for="customRange2">Polls: 0% | 25% | 50% | 75% | 100%</label>
+							<input type="range" class="custom-range" min="0.00" max="1.00" step="0.25" id="leanWeight">
 						</div>
 				  	</form>
 				</div>
